@@ -128,7 +128,7 @@ void URogueProjectilesSubsystem::RemoveProjectileID(uint32 IdToRemove)
 
 	FProjectileInstance TempInst = FProjectileInstance(IdToRemove);
 	// Perhaps hacky to use a temp struct to 'find' it by ID in the array
-	ProjectileInstances.Remove(TempInst);
+	ProjectileInstances.RemoveSwap(TempInst);
 }
 
 
@@ -164,6 +164,7 @@ void URogueProjectilesSubsystem::Tick(float DeltaTime)
 	{
 		TRACE_CPUPROFILER_EVENT_SCOPE(MoveProjectiles);
 		
+		TArray<FHitResult> HitResults;
 		for (int32 ProjIndex = 0; ProjIndex < ProjectileInstances.Num(); ProjIndex++)
 		{
 			FProjectileInstance& Proj = ProjectileInstances[ProjIndex];
@@ -181,7 +182,7 @@ void URogueProjectilesSubsystem::Tick(float DeltaTime)
 				//DrawDebugPoint(World, Proj.Position, 10.0f, FColor::Green, false, 2.0f);
 			}
 			
-			TArray<FHitResult> HitResults;		
+			HitResults.Reset();
 			// True only blocking hit
 			if (World->SweepMultiByChannel(HitResults, Proj.Position, NextPosition, FQuat::Identity, CollisionChannel, Shape))
 			{
